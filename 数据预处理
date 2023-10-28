@@ -1,2 +1,36 @@
 ####找出excel中空值
 ####在“查找”中查询ctrl+空格
+import pandas as pd
+from scipy.interpolate import interp1d
+
+# 读取Excel文件
+df = pd.read_excel(r'C:\Users\邓和顺\Desktop\插值法.xlsx')
+
+# 获取年份列的数据
+years = df['year']
+
+# 遍历需要插值的列（例如，b、c、d列）
+columns_to_interpolate = [ 'capital']
+
+
+for column in columns_to_interpolate:
+    # 获取需要插值的列的数据
+    data = df[column]
+    
+    # 找到非空数据的索引
+    valid_indices = data.notna()
+    
+    # 创建插值函数
+    interpolator = interp1d(years[valid_indices], data[valid_indices], kind='linear', fill_value='extrapolate')
+    
+    # 对空值进行插值
+    interpolated_values = df['year'].apply(lambda x: interpolator(x))
+    
+    # 替换原始数据中的空值
+    df[column] = df[column].where(valid_indices, interpolated_values)
+
+# 保存插值后的数据到新的Excel文件
+df.to_excel('interpolated_data.xlsx', index=False)
+# 输出插值结果
+for year, value in zip(years, interpolated_values):
+    print(f'Year: {year}, Interpolated Value: {value}')
