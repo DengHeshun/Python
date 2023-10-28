@@ -1,1 +1,59 @@
+#####sigma收敛  采用变异系数
+
+import pandas as pd
+
+# 读取包含数据的 Excel 文件
+df = pd.read_excel(r'C:\Users\邓和顺\Desktop\【working paper】\中部数据.xlsx')
+
+# 按照年份分组
+grouped = df.groupby('year')
+
+# 存储每一年的标准差与均值的比值
+result_data = []
+
+# 计算每一年的标准差与均值的比值
+for year, group in grouped:
+    std = group['co2'].std()  # 替换 'your_column' 为你的数据列名称
+    mean = group['co2'].mean()  # 替换 'your_column' 为你的数据列名称
+    
+    ratio = std / mean
+    
+    result_data.append({'Year': year, 'Ratio': ratio})
+
+# 创建结果的 DataFrame
+result_df = pd.DataFrame(result_data)
+
+# 输出结果
+print(result_df)
+
+
+#############################################
+import pandas as pd
+
+# 读取包含数据的 Excel 文件
+df = pd.read_excel(r'C:\Users\邓和顺\Desktop\收敛性.xlsx')
+
+# 按照年份和区域类别分组
+grouped = df.groupby(['year', 'region'])
+
+# 存储每组的标准差与均值的比值
+result_data = []
+
+# 计算每组的标准差与均值的比值
+for (year, region), group in grouped:
+    std = group['co2'].std()  # 替换 'value' 为你的数据列名称
+    mean = group['co2'].mean()  # 替换 'value' 为你的数据列名称
+    
+    ratio = std / mean
+    
+    result_data.append({'Year': year, 'Region': region, 'Ratio': ratio})
+
+# 创建结果的 DataFrame
+result_df = pd.DataFrame(result_data)
+
+# 输出结果到终端
+print(result_df)
+
+# 输出结果到 Excel 文件
+result_df.to_excel('result.xlsx', index=False)
 
