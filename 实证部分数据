@@ -1,27 +1,44 @@
 
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
 # 读取包含数据的 Excel 文件
 df = pd.read_excel(r'C:\Users\邓和顺\Desktop\收敛性.xlsx')
+
 # 按照年份和区域类别分组，并计算均值
 grouped = df.groupby(['year', 'region'])['co2'].mean().reset_index()
+
+# 计算全国的碳排放效率均值
+national_data = grouped.groupby('year')['co2'].mean().reset_index()
+
+
+national_data[ 'region'] = 'Nationwide'
+# 将全国数据合并到原数据中
+grouped = pd.concat([grouped, national_data], ignore_index=True)
 
 # 输出结果到 Excel 表格
 grouped.to_excel('output.xlsx', index=False)
 
+# 设置图形参数
+plt.figure(figsize=(12, 6))  # 设置图形大小
+plt.rcParams['font.sans-serif'] = 'Times New Roman'  # 设置英文字体为Times New Roman
+plt.rcParams['axes.grid'] = False  # 去除网格线
+
+
 # 绘制时间趋势图
-plt.figure(figsize=(10, 6))
-markers = ['o', 's', '^', 'D']  # 不同区域的标记
+markers = ['o', 's', '^', 'D', '*']  # 包括全国的标记
 for region, marker in zip(grouped['region'].unique(), markers):
     data = grouped[grouped['region'] == region]
-    plt.plot(data['year'], data['co2'], marker=marker, label=f'区域{region}')
+    plt.plot(data['year'], data['co2'], marker=marker, label=f'{region}')
 
 plt.xlabel('Year')
 plt.ylabel('Carbon Emission Efficiency')
 plt.legend()
 plt.title('Evolution trend of urban carbon emission Efficiency in China (2011-2019)')
-plt.grid(True)
+plt.tight_layout()  # 自动调整子图参数，使之填充整个图像区域
+# 保存生成的图片
+plt.savefig('carbon_emission_trend.png')
 plt.show()
-
 
