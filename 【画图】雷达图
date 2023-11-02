@@ -1,1 +1,35 @@
+#######论文中画雷达图数据
+from pyecharts.charts import Radar
+import pyecharts.options as opts
 
+# 数据和指标名称
+data = [0.19571, 0.19647, 0.22319, 0.16737, 0.18727, 0.17625]
+indicators = ['East_Central', 'East_West', 'East_Northeast', 'Central_West', 'Central_Northeast', 'West_Northeast']
+
+# 创建雷达图
+radar_chart = (
+    Radar(init_opts=opts.InitOpts(width="1200px", height="800px"))  # 设置图片大小
+    .add_schema(
+        shape="circle",  # 设置圆形坐标系
+        schema=[
+            opts.RadarIndicatorItem(name='East_Central', max_=0.30),  # 设置坐标轴名称和最大值
+            opts.RadarIndicatorItem(name='East_West', max_=0.30),
+            opts.RadarIndicatorItem(name='East_Northeast', max_=0.30),
+            opts.RadarIndicatorItem(name='Central_West', max_=0.30),
+            opts.RadarIndicatorItem(name='Central_Northeast', max_=0.30),
+            opts.RadarIndicatorItem(name='West_Northeast', max_=0.30)
+        ],
+        textstyle_opts=opts.TextStyleOpts(font_size=14, color='black')  # 设置字体为黑色，字体大小为20
+    )
+    .add("2011", [data], areastyle_opts=opts.AreaStyleOpts(opacity=0.8, color='grey'))  # 添加数据,填充颜色
+    .set_series_opts(label_opts=opts.LabelOpts(is_show=False))  # 不显示数据的注释
+    .set_global_opts(
+        title_opts=opts.TitleOpts(title='2011',  # 设置标题
+            title_textstyle_opts=opts.TextStyleOpts(font_size=14),  # 设置字体大小
+            pos_left='center', pos_top='95%'),  # 设置标题居中且在中下方
+        legend_opts=opts.LegendOpts(is_show=False),  # 取消图例
+       
+    )
+)
+
+radar_chart.render("radar_chart_2011.html")  # 保存为 JPEG 文件
