@@ -1,0 +1,89 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 读取Excel文件
+file_path = r'C:\Users\邓和顺\Desktop\10.晋城市\1.晋城市推进新型工业化的思考调研报告\苏州市规上工业企业数据.xlsx'
+df = pd.read_excel(file_path)
+
+# 提取所需的数据列
+left_y_columns = ["工业总产值", "制造业新兴产业产值", "高技术制造业产值", "营业收入", "利税总额"]
+right_y_columns = ["制造业新型产业", "高技术制造业"]
+x_column = "year"
+
+# 颜色设置
+bar_colors = ['lightyellow', 'lightpink', 'lightgreen', 'lightcoral', 'lightblue']
+line_colors = ['gray', 'gray']
+
+# 指定中文字体
+plt.rcParams['font.sans-serif'] = ['FangSong']
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
+# 创建画布和子图
+fig, ax1 = plt.subplots(figsize=(12, 8))
+
+plt.subplots_adjust(left=0.08, right=0.92, top=0.90, bottom=0.1)
+
+# 设置柱形图的宽度为0.1
+bar_width = 0.15
+
+# 绘制左边纵坐标轴（亿元）并添加黑色边框
+for i, (column, color) in enumerate(zip(left_y_columns, bar_colors)):
+    x_pos = np.arange(len(df[x_column])) + i * bar_width - 0.3  # Shift to the left by 3mm  移动柱状图的位置
+    bars = ax1.bar(x_pos, df[column], width=bar_width, label=column, color=color, edgecolor='black', linewidth=1)
+
+    # 在每个柱子上方添加具体数据的注释
+    for bar in bars:
+        h = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width() / 2, h + 390, f'{h:.1f}', ha='center', va='bottom', rotation=90, color='black', fontsize=14) # h +  xx  移动柱状图数据标签位置
+
+# 设置横坐标刻度和标签
+ax1.set_xticks(np.arange(len(df[x_column])))
+ax1.set_xticklabels(df[x_column])
+
+# 设置左边坐标轴属性
+ax1.set_xlabel("年份", fontsize=16, color='black')
+ax1.set_ylabel("亿元", fontsize=16, color='black')
+ax1.tick_params(axis='y' , labelcolor='black', colors='black')
+ax1.tick_params(axis='x', colors='black')
+ax1.set_ylim(0, 60000)  # 左边坐标轴刻度范围
+
+# 添加图例，设置字体大小和字体
+ax1.legend(loc='upper left', fontsize=16, prop={'family': 'FangSong'})
+
+# 创建右边坐标轴
+ax2 = ax1.twinx()
+
+# 绘制右边坐标轴（占比%）
+for i, (column, color) in enumerate(zip(right_y_columns, line_colors)):
+    x_pos = np.arange(len(df[x_column]))
+    # 绘制折线图，使用不同形状
+    marker = 'o' if i == 0 else 's'  # 折线图上点的形状
+    ax2.plot(x_pos, df[column], label=column, linestyle='--', color=color, marker=marker, markersize=5) # 折线图线条形状
+
+    # 在每个折线点上添加具体数据的注释
+    for x, y in zip(x_pos, df[column]):
+        ax2.annotate(f'{y:.2f}%', (x, y), textcoords="offset points", xytext=(0, 5), ha='center', fontsize=12)  # f'{} 调整折线图数据标签小数点位置
+
+# 设置右边坐标轴属性
+ax2.set_ylabel("占比（%）", fontsize=16, color='black')
+ax2.tick_params(axis='y', labelcolor='black', colors='black')
+ax2.set_ylim(0, 100)  # 右边坐标轴刻度范围
+
+# 添加图例，设置字体大小和字体
+ax2.legend(loc='upper right', fontsize=16, prop={'family': 'FangSong'})
+
+# 设置图表标题
+
+# 调整图表上方/下方空白部分
+plt.subplots_adjust(top=0.98)
+
+# 调整横纵坐标轴上刻度数字的字体大小
+ax1.tick_params(axis='both', labelsize=16)
+ax2.tick_params(axis='both', labelsize=16)
+
+# 保存为PNG格式
+
+plt.savefig(r'C:\Users\邓和顺\Desktop\10.晋城市\1.晋城市推进新型工业化的思考调研报告\苏州市.png', format='png', dpi=300)
+# 显示图表
+plt.show()
